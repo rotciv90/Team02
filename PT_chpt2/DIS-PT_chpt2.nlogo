@@ -99,6 +99,9 @@ citizens-own [
   inPrison?
   jailtime
   jailsentence
+  state
+  vision
+  walking-speed
 ]
 ;---- Specific, local variables of cop-agents
 cops-own [
