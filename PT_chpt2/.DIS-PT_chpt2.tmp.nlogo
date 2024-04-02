@@ -99,6 +99,9 @@ citizens-own [
   inPrison?
   jailtime
   jailsentence
+  state
+  vision
+  walking-speed
 ]
 ;---- Specific, local variables of cop-agents
 cops-own [
@@ -114,7 +117,7 @@ cops-own [
 to setup
   clear-all
   ; define global variables that are not set as sliders
-  set max-jailterm 50
+  set max-jailterm 100
 
 
   ; setup of the environment:
@@ -148,6 +151,14 @@ to setup
     set jailtime 0
     set jailsentence 0
     ;set speed random 5 + 1 ; make sure it cannot be 0
+
+        ; Initialize new FSM-related variables
+    set state "moving around freely" ; FSM state
+    set vision random-float 10 ; Random vision distance
+    set walking-speed 1 + random-float 1 ; Random walking speed, between 1 and 2
+    set jailtime 0
+    set jailsentence random max-jailterm ; Random jail sentence based on max-jailterm
+    set inPrison? false
   ]
 
   ;---- setup cops
@@ -206,13 +217,13 @@ to go
 end ; - to go part
 @#$#@#$#@
 GRAPHICS-WINDOW
-549
-10
-1731
-614
+437
+15
+1314
+465
 -1
 -1
-17.5224
+12.971
 1
 10
 1
@@ -290,7 +301,7 @@ num-cops
 num-cops
 0
 50
-20.0
+10.0
 1
 1
 NIL

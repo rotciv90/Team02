@@ -11,40 +11,73 @@
 
 to citizen_behavior
   
-; checking if the citizen is in prison
-ifelse inPrison? = true [
-    set jailtime jailtime + 1 ;counting the time in prison
-    print (word "citizen " who "is in prison since: " jailtime)
-    if jailtime > jailsentence [; released from prison
-      set jailtime 0
-      ; move forward where there are no cops and is not prison
-      let places neighborhood with [not any? cops-here and region != "prison"]
-      if any? places [move-to one-of places]
-      set inPrison? false
-      set color yellow
-      print (word "citizen " who "is released from prison")
+  if state = "moving around freely" [
+  
+    rt random 360
+    fd walking-speed
+   
+    if (pcolor = gray) [
+      bk walking-speed
+    ]
+
+    let nearby-police other cops in-radius vision
+    
+    if any? nearby-police [
+      set state "running away from cops"
     ]
   ]
-  [;else checking if cops are within vision radius
-    let nearby-police other cops in-radius citizen-vision
-    if any? nearby-police [
-      let police min-one-of nearby-police [distance myself]; identify the cop that is nearest
-      if police != nobody [
-        print (word " citizen: " who " sees cop: " police)
-        set heading (towards police) + 180 ; face opposite from the nearest police
-      ] 
-    ]    
-    ; move forward where there are no cops and is not prison
-    let places neighborhood with [not any? cops-here and region != "prison"]
-    if any? places [move-to one-of places]
+  
+  if state = "running away from cops" [
+ 
+    let nearest-cop min-one-of (other cops in-radius vision) [distance myself]
+   
+    if nearest-cop != nobody [
+      
+      let escape-heading towards nearest-cop + 180
+      set heading escape-heading
+     
+      let escape-speed walking-speed * 1.5  ; Increase the speed by 50%
+      fd escape-speed
+      
+      if (pcolor = gray) [
+        bk escape-speed
+      ]
+    ]
+ 
+    if not any? (other cops in-radius vision) [
+      set state "moving around freely"
+      set walking-speed 1 + random-float 1
+    ]
   ]
+  
+  if state = "being arrested and put to prison" [
+    
+    set color red
+    set walking-speed 0
+    move-to one-of patches with [pcolor = gray and not any? turtles-here]
+    set state "in prison"
+  ]
+  
+  if state = "in prison" [
+  
+    set inprison? true
+    set jailtime jailtime + 1
+    set walking-speed 0
+    
+    if jailtime >= jailsentence [
+      
+      set jailtime 0
+      set state "just released"    
+    ]
+  ]
+  
+  if state = "just released" [
+
+    move-to one-of patches with [not any? turtles-here and pcolor != gray]
+    set color green
+    set inprison? false
+    set walking-speed 1 + random-float 1
+    set state "moving around freely"
+]
 end
 
-; if asked to go to prison  
-to gotoprison 
-  ; set flag
-  set inPrison? true
-  set color red
-  ; move to prison into an own cell (=own patch)
-  move-to one-of patches with [not any? turtles-here and region = "prison"]
-end
