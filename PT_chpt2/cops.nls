@@ -21,7 +21,9 @@ to cop_behavior
         ]
     ]
     [; else look for citizens and move towards them
-     set suspect one-of other citizens with [inPrison? = false] in-radius cop-vision
+     ;set suspect one-of other citizens with [inPrison? = false] in-radius cop-vision
+    
+    set suspect one-of other citizens with [inPrison? = false] in-cone vision-radius vision-angle
      if suspect != nobody [
         print (word " cop-agent: " who " sees suspect: " suspect)
         face suspect  

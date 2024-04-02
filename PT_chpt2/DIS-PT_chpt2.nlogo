@@ -197,6 +197,8 @@ to go
       ]
   ]
 
+
+
   ;recorder
  if vid:recorder-status = "recording" [
     if Source = "Only View" [vid:record-view] ; records the plane
@@ -407,6 +409,36 @@ _______________________________________
 11
 0.0
 1
+
+SLIDER
+22
+348
+138
+381
+vision-radius
+vision-radius
+0
+300
+33.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+155
+350
+247
+383
+vision-angle
+vision-angle
+0
+360
+37.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -773,7 +805,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
