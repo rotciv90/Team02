@@ -197,6 +197,8 @@ to go
       ]
   ]
 
+
+
   ;recorder
  if vid:recorder-status = "recording" [
     if Source = "Only View" [vid:record-view] ; records the plane
@@ -407,6 +409,36 @@ _______________________________________
 11
 0.0
 1
+
+SLIDER
+22
+348
+138
+381
+vision-radius
+vision-radius
+0
+300
+33.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+155
+350
+247
+383
+vision-angle
+vision-angle
+0
+360
+37.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
