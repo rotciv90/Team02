@@ -17,7 +17,7 @@ to cop_behavior
         print (word " cop-agent: " who " puts suspect: " suspect " to prison!")
         ask suspect [
            set jailsentence random max-jailterm
-           gotoprison
+           set state "being arrested and put to prison"
         ]
     ]
     [; else look for citizens and move towards them

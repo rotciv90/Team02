@@ -81,13 +81,11 @@ globals [
   ;
   max-jailterm
   hunger_rate
-
 ]
 
 ;---- General agent variables
 turtles-own [
   ;speed
-  speed
 ]
 
 ;---- Specific, local variables of patches
@@ -125,7 +123,6 @@ to setup
   clear-all
   ; define global variables that are not set as sliders
   set max-jailterm 50
-  set hunger_rate 0.1
 
 
   ; setup of the environment:
@@ -144,8 +141,8 @@ to setup
     ]
     ask one-of prisonpatches [set plabel "PRISON"]
 
-  ; setup restaurant
-  let restaurantpatches patches with [pxcor >= 40  and pxcor <= 50 and pycor >= 20 and pycor <= 25]
+  ;setup restaurant
+  let restaurantpatches patches with [pxcor >= 40 and pxcor <= 50 and pycor >= 20 and pycor <= 25]
   ask restaurantpatches [
     set pcolor red
     set region "restaurant"
@@ -161,13 +158,16 @@ to setup
     setxy random-xcor random-ycor
     ; make sure the agents are not placed in prison already during setup:
     move-to one-of patches with [ not any? turtles-here and region != "prison"]
-
     ; setting specific variables for citizen
     set inPrison? false
     set jailtime 0
     set jailsentence 0
     ;set speed random 5 + 1 ; make sure it cannot be 0
-    set speed random 5 + 1 ; make sure it cannot be 0
+
+    set state "moving around freely"
+    set vision random-float 10
+    set walking-speed 1 + random-float 1
+
   ]
 
   ;---- setup cops
@@ -180,11 +180,9 @@ to setup
     move-to one-of patches with [ not any? turtles-here and region != "prison"]
     move-to one-of patches with [ not any? turtles-here and region != "restaurant"]
     set inRestaurant? false
-    set cop-speed random 3 + 1 ; make sure it cannot be 0
+    set cop-speed random 3 + 1
     set hunger random 50 + 1
     set restauranttime 0
-
-
 
   ]
 
@@ -224,6 +222,8 @@ to go
       cop_behavior ; code as defined in the include-file "cops.nls"
       ]
   ]
+
+
 
   ;recorder
  if vid:recorder-status = "recording" [
@@ -270,7 +270,6 @@ num-citizens
 1
 30
 20.0
-10.0
 1
 1
 NIL
@@ -320,7 +319,6 @@ num-cops
 0
 50
 20.0
-6.0
 1
 1
 NIL
@@ -336,7 +334,6 @@ citizen-vision
 1
 10
 3.0
-4.7
 0.1
 1
 NIL
@@ -438,6 +435,36 @@ _______________________________________
 11
 0.0
 1
+
+SLIDER
+22
+348
+138
+381
+vision-radius
+vision-radius
+0
+300
+33.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+155
+350
+247
+383
+vision-angle
+vision-angle
+0
+360
+37.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
