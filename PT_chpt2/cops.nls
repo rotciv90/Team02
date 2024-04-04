@@ -27,6 +27,42 @@ to cop_behavior
         face suspect  
     ]
     forward cop-speed ; move forward towards suspect
+     set hunger hunger - hunger_rate
+    
+    if hunger <= 0 and inRestaurant? = false[
+      print(word "cop-agent:" who "is hungry and is heading to restaurant")
+      ask self[
+        gotorestaurant
+      ]
+      ]
+    
+    if inRestaurant? = true[
+      set restauranttime restauranttime + 1
+      set cop-speed 0
+      print( word "Cop" who "is in restaurant since" restauranttime)
+      if restauranttime >= 50[
+        set restauranttime 0
+        set hunger 50
+        set cop-speed random 3 + 1
+        set color pink
+        print( word "Cop" who "is back from eating donuts")
+        set inRestaurant? false
+        
+      ]
+    ]
+    
+    if inRestaurant? = false[
+      move-to one-of patches with [not any? turtles-here and region != "restaurant"]
+    ]
+    
   ]
 end
-
+  ; if asked to go to restaurant  
+to gotorestaurant 
+  ; set flag
+  
+  move-to one-of patches with [not any? turtles-here and region = "restaurant"]
+  set inRestaurant? true
+  
+  
+end
