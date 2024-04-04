@@ -167,7 +167,9 @@ to setup
     set state "moving around freely"
     set vision random-float 10
     set walking-speed 1 + random-float 1
-
+    set jailtime 0
+    set jailsentence random max-jailterm
+    set inPrison? false
   ]
 
   ;---- setup cops
