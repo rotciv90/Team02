@@ -80,11 +80,14 @@ breed [cops cop] ;
 globals [
   ;
   max-jailterm
+  hunger_rate
+
 ]
 
 ;---- General agent variables
 turtles-own [
   ;speed
+  speed
 ]
 
 ;---- Specific, local variables of patches
@@ -107,6 +110,10 @@ citizens-own [
 cops-own [
   ;cop-vision is set by slider
   cop-speed
+  hunger
+  inRestaurant?
+  restauranttime
+
 ]
 
 
@@ -118,6 +125,7 @@ to setup
   clear-all
   ; define global variables that are not set as sliders
   set max-jailterm 50
+  set hunger_rate 0.1
 
 
   ; setup of the environment:
@@ -136,6 +144,13 @@ to setup
     ]
     ask one-of prisonpatches [set plabel "PRISON"]
 
+  ; setup restaurant
+  let restaurantpatches patches with [pxcor >= 40  and pxcor <= 50 and pycor >= 20 and pycor <= 25]
+  ask restaurantpatches [
+    set pcolor red
+    set region "restaurant"
+  ]
+  ask one-of restaurantpatches [set plabel "RESTAURANT"]
 
   ; setup citizen-agents
   create-citizens num-citizens [
@@ -146,11 +161,13 @@ to setup
     setxy random-xcor random-ycor
     ; make sure the agents are not placed in prison already during setup:
     move-to one-of patches with [ not any? turtles-here and region != "prison"]
+
     ; setting specific variables for citizen
     set inPrison? false
     set jailtime 0
     set jailsentence 0
     ;set speed random 5 + 1 ; make sure it cannot be 0
+    set speed random 5 + 1 ; make sure it cannot be 0
   ]
 
   ;---- setup cops
@@ -161,6 +178,14 @@ to setup
     set color blue
     set cop-speed random 3 + 1 ; make sure it cannot be 0
     move-to one-of patches with [ not any? turtles-here and region != "prison"]
+    move-to one-of patches with [ not any? turtles-here and region != "restaurant"]
+    set inRestaurant? false
+    set cop-speed random 3 + 1 ; make sure it cannot be 0
+    set hunger random 50 + 1
+    set restauranttime 0
+
+
+
   ]
 
 
@@ -245,6 +270,7 @@ num-citizens
 1
 30
 20.0
+10.0
 1
 1
 NIL
@@ -294,6 +320,7 @@ num-cops
 0
 50
 20.0
+6.0
 1
 1
 NIL
@@ -309,6 +336,7 @@ citizen-vision
 1
 10
 3.0
+4.7
 0.1
 1
 NIL
