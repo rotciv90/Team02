@@ -123,7 +123,7 @@ to setup
   clear-all
   ; define global variables that are not set as sliders
   set max-jailterm 50
-
+  set hunger_rate 0.1
 
   ; setup of the environment:
   ; setup of all patches
