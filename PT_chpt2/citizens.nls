@@ -9,88 +9,52 @@
 
 to update-intentions
  
+  ifelse any? cops in-radius vision [
+    
+    if not member? "avoid cops" intention-stack [
+      
+      set intention-stack fput "avoid cops" intention-stack
+    ]
+  ][
+    
+    set intention-stack remove "avoid cops" intention-stack
+  ]
+  
+  
   ifelse pcolor = gray [
     
     if not member? "inprisoned" intention-stack [
       
-      set intention-stack fput "inprisoned" intention-stack
+      set intention-stack fput "be inprisoned" intention-stack
     ]
   ] [
     
-    set intention-stack remove "inprisoned" intention-stack
+    set intention-stack remove "be inprisoned" intention-stack
   ]
-  
-  ifelse any? cops in-radius vision [
-    
-    if not member? "avoiding cops" intention-stack [
-      
-      set intention-stack fput "avoiding cops" intention-stack
-    ]
-  ][
-    
-    set intention-stack remove "avoiding cops" intention-stack
-  ]
-  
 end
 
-to citizen_behavior
+
+to execute-actions
   
-  ifelse state = "being arrested and put to prison" [
-    handle-being-arrested-and-put-into-prison
-  ][
-    ifelse state = "in prison" [
-      handle-in-prison
-    ][
-      ifelse state = "just released" [
-        handle-just-released
-      ][
-        ifelse state = "running away from cops" [
-          handle-running-away-from-cops
-        ][
-          ifelse state = "moving around freely" [
-            handle-moving-freely
-          ][
-            if state = "check for proactive behaviour" [
-              
-            ]
-          ]
-        ]
+  let current-intention first intention-stack
+ 
+  ifelse current-intention = "avoid cops" [
+      avoid-cops
+  ] [
+    
+    ifelse current-intention = "be inprisoned" [
+      be-inprisoned
+    ] [
+      
+      if current-intention = "move freely" [
+        move-freely
       ]
     ]
   ]
-
-end
-
-to handle-being-arrested-and-put-into-prison
   
-    set color red
-    set walking-speed 0
-    move-to one-of patches with [pcolor = gray and not any? turtles-here]
-    set inprison? true
-    set state "in prison"
 end
 
-to handle-in-prison
-  
-    set jailtime jailtime + 1
-    
-    if jailtime >= jailsentence [
-      
-      set jailtime 0
-      set state "just released"    
-    ]
-end
-
-to handle-just-released
-  
-    move-to one-of patches with [not any? turtles-here and pcolor != gray]
-    set color green
-    set inprison? false
-    set walking-speed 1 + random-float 1
-    set state "moving around freely"
-end
-
-to handle-running-away-from-cops
+to avoid-cops
   
     let nearest-cop min-one-of (other cops in-radius vision) [distance myself]
    
@@ -99,21 +63,29 @@ to handle-running-away-from-cops
       let escape-heading towards nearest-cop + 180
       set heading escape-heading
      
-      let escape-speed walking-speed * 1.5  ; Increase the speed by 50%
+      let escape-speed walking-speed * 1.5
       fd escape-speed
       
       if (pcolor = gray) [
         bk escape-speed
       ]
     ]
- 
-    if not any? (other cops in-radius vision) [
-      set state "moving around freely"
+end
+
+to be-inprisoned
+  
+    set jailtime jailtime + 1
+    
+    if jailtime >= jailsentence [
+      
+      set jailtime 0
+      move-to one-of patches with [not any? turtles-here and pcolor != gray]
+      set color green
       set walking-speed 1 + random-float 1
     ]
 end
 
-to handle-moving-freely
+to move-freely 
   
     rt random 360
     fd walking-speed
@@ -121,22 +93,128 @@ to handle-moving-freely
     if (pcolor = gray) [
       bk walking-speed
     ]
-
-    let nearby-police other cops in-radius vision
-    
-    ifelse any? nearby-police [
-    
-      set state "running away from cops"
-    ][
-    
-      perform-proactive-checks
-    ]
-end
-
-to perform-proactive-checks
   
 end
 
-to handle-reading-newspaper
 
-end
+
+
+
+
+
+
+
+
+
+
+
+
+;to citizen_behavior
+;  
+;  ifelse state = "being arrested and put to prison" [
+;    handle-being-arrested-and-put-into-prison
+;  ][
+;    ifelse state = "in prison" [
+;      handle-in-prison
+;    ][
+;      ifelse state = "just released" [
+;        handle-just-released
+;      ][
+;        ifelse state = "running away from cops" [
+;          handle-running-away-from-cops
+;        ][
+;          ifelse state = "moving around freely" [
+;            handle-moving-freely
+;          ][
+;            if state = "check for proactive behaviour" [
+;              
+;            ]
+;          ]
+;        ]
+;      ]
+;    ]
+;  ]
+;
+;end
+;
+;
+;to handle-being-arrested-and-put-into-prison
+;  
+;    set color red
+;    set walking-speed 0
+;    move-to one-of patches with [pcolor = gray and not any? turtles-here]
+;    set inprison? true
+;    set state "in prison"
+;end
+;
+;to handle-in-prison
+;  
+;    set jailtime jailtime + 1
+;    
+;    if jailtime >= jailsentence [
+;      
+;      set jailtime 0
+;      set state "just released"    
+;    ]
+;end
+;
+;to handle-just-released
+;  
+;    move-to one-of patches with [not any? turtles-here and pcolor != gray]
+;    set color green
+;    set inprison? false
+;    set walking-speed 1 + random-float 1
+;    set state "moving around freely"
+;end
+;
+;to handle-running-away-from-cops
+;  
+;    let nearest-cop min-one-of (other cops in-radius vision) [distance myself]
+;   
+;    if nearest-cop != nobody [
+;      
+;      let escape-heading towards nearest-cop + 180
+;      set heading escape-heading
+;     
+;      let escape-speed walking-speed * 1.5  ; Increase the speed by 50%
+;      fd escape-speed
+;      
+;      if (pcolor = gray) [
+;        bk escape-speed
+;      ]
+;    ]
+; 
+;    if not any? (other cops in-radius vision) [
+;      set state "moving around freely"
+;      set walking-speed 1 + random-float 1
+;    ]
+;end
+;
+;to handle-moving-freely
+;  
+;    rt random 360
+;    fd walking-speed
+;   
+;    if (pcolor = gray) [
+;      bk walking-speed
+;    ]
+;
+;    let nearby-police other cops in-radius vision
+;    
+;    ifelse any? nearby-police [
+;    
+;      set state "running away from cops"
+;    ][
+;    
+;      perform-proactive-checks
+;    ]
+;end
+;
+;to perform-proactive-checks
+;  
+;end
+;
+;to handle-reading-newspaper
+;
+;end
+;

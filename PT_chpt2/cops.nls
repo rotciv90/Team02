@@ -17,6 +17,10 @@ to cop_behavior
         print (word " cop-agent: " who " puts suspect: " suspect " to prison!")
         ask suspect [
            set jailsentence random max-jailterm
+           set color red
+           set walking-speed 0
+           move-to one-of patches with [pcolor = gray and not any? turtles-here]
+           
            set state "being arrested and put to prison"
         ]
     ]

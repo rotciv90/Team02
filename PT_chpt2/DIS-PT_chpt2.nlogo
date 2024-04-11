@@ -173,7 +173,7 @@ to setup
     set jailsentence random max-jailterm
     set inPrison? false
 
-    set intention-stack (list "walking freely")
+    set intention-stack list "move freely" intention-stack
   ]
 
   ;---- setup cops
@@ -222,7 +222,8 @@ to go
   ask turtles [
     ; Reactive part based on the type of agent
     if (breed = citizens) [
-      citizen_behavior ; code as defined in the include-file "citizens.nls"
+      update-intentions
+      execute-actions
       ]
     if (breed = cops) [
       cop_behavior ; code as defined in the include-file "cops.nls"
